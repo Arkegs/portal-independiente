@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 function App() {
 
-
   const [state, setState] = useState({data: null});
 
   const callBackendAPI = async () => {

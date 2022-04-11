@@ -1,8 +1,10 @@
-// Server Init
+// Server Init variables
 const express = require('express');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
+const bodyParser = require('body-parser');
 const port = process.env.PORT || 5000;
+
 
 // Routes setting
 const loginRoutes = require('./routes/loginRoutes');
@@ -24,6 +26,7 @@ const app = express();
 
 // Server Setup
 app.use(methodOverride('_method'));
+app.use(bodyParser.json());
 app.use('/api/jobs/:jobId/reviews', reviewRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/jobs', jobsRoutes);
