@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
+const Job = require('./job');
+const Review = require('./review');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
@@ -17,6 +19,18 @@ const UserSchema = new Schema({
         type: Date,
         required: true
     },
+    jobs: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Job'
+        }
+    ],
+    reviews: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Review'
+        }
+    ],
     banned:{
         type: Number,
         default: 0
@@ -34,6 +48,22 @@ const UserSchema = new Schema({
 {
     timestamps: { createdAt: true, updatedAt: false }
 });
+
+UserSchema.post('findOneAndDelete', async function(doc){
+    if(doc){
+        await Job.remove({
+            _id: {
+                $in: doc.jobs
+            }
+        });
+        await Review.remove({
+            _id: {
+                $in: doc.reviews
+            }
+        })
+    }
+});
+
 
 UserSchema.plugin(passportLocalMongoose);
 

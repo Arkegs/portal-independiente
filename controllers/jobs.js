@@ -3,13 +3,24 @@ const Job = require('../models/job');
 
 // Function for retrieving all jobs
 module.exports.getAllJobs = async (req, res) =>{
-    if(req.query.lastId){
-        // Instead of pagination, it uses mongoose _id to retrieve data to make it scalable
-        const lastId =  mongoose.Types.ObjectId(req.query.lastId);
-        const jobs = await Job.find({'_id' : { $gte : lastId }}).limit(8).exec()
+    const jobs = {sortType: undefined, results: {}};
+    const sortType = {sort: {}};
+    //If a sort query parameter is given, the search will be sorted
+    if(req.query.sortingType){
+        const sortQuery = req.query.sortingType;
+        if(sortQuery === "createdAt" || sortQuery === "review" || sortQuery === "price"){
+            (sortQuery === "price") 
+            ? sortType.sort = {[sortQuery] : 'asc', '_id': 'asc'}
+            : sortType.sort = {[sortQuery] : 'desc', '_id': 'asc'}
+            jobs.sortType = sortQuery;
+        }
+    }
+    if(req.query.pageNum){
+        // Paginate results
+        jobs.results = await Job.paginate({},{page: req.query.pageNum, limit:8, ...sortType});
         return res.send(jobs);
     }
-    const jobs = await Job.find({'_id' : { $gte : lastId }}).limit(8).exec()
+    jobs.results = await Job.paginate({},{page: 0, limit:8, ...sortType});
     return res.send(jobs);
 }
 
@@ -17,7 +28,7 @@ module.exports.getAllJobs = async (req, res) =>{
 module.exports.getJob = async (req, res) => {
     try{
         const jobId = mongoose.Types.ObjectId(req.params.jobId);
-        const job = await Job.findById(jobId);
+        const job = await Job.findById(jobId).populate('author').populate('reviews').exec();
         return res.send(job);
     } catch(err){
         return res.send({error: "There was an error"});
