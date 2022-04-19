@@ -4,11 +4,11 @@ const reviews = require('../controllers/reviews');
 
 // Review routes
 router.route('/')
-    .get(reviews.reviewAction)
-    .post(reviews.reviewAction);
+    .post(reviews.createReview);
 
 router.route('/:reviewId')
-    .delete(reviews.reviewAction)
-    .put(reviews.reviewAction);
+    .delete(reviews.deleteReview)
+    .put(reviews.updateReview)
+    .patch(reviews.upvoteReview);
 
 module.exports = router;

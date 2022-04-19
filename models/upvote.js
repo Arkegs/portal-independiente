@@ -15,4 +15,4 @@ const UpvoteSchema = Schema({
     value: Number
 });
 
-module.exports = mongoose.model('Review', ReviewSchema);
+module.exports = mongoose.model('Upvote', UpvoteSchema);

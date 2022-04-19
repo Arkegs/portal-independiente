@@ -16,7 +16,7 @@ module.exports.getAllJobs = async (req, res) =>{
         }
     }
     if(req.query.pageNum){
-        // Paginate results
+        // Paginate results if pageNum parameter is given
         jobs.results = await Job.paginate({},{page: req.query.pageNum, limit:8, ...sortType});
         return res.send(jobs);
     }
