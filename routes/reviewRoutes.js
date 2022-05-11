@@ -1,14 +1,15 @@
 const express = require('express');
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const reviews = require('../controllers/reviews');
+const { isLoggedIn } = require('../middleware');
 
 // Review routes
 router.route('/')
-    .post(reviews.createReview);
+    .post(isLoggedIn, reviews.createReview);
 
 router.route('/:reviewId')
-    .delete(reviews.deleteReview)
-    .put(reviews.updateReview)
-    .patch(reviews.upvoteReview);
+    .delete(isLoggedIn, reviews.deleteReview)
+    .put(isLoggedIn, reviews.updateReview)
+    .patch(isLoggedIn, reviews.upvoteReview);
 
 module.exports = router;

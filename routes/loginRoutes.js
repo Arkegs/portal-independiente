@@ -1,10 +1,14 @@
 const express = require('express');
-const router = express.Router();
+const passport = require('passport');
+const router = express.Router({ mergeParams: true });
 const users = require('../controllers/users');
+const { isLoggedIn } = require('../middleware');
 
 // Login and register routes
-router.get('/', users.userAction);
-router.post('/login', users.userAction);
-router.post('/register', users.userAction);
+router.post('/login', passport.authenticate('local'), users.loginUser);
+router.post('/register', users.registerUser);
+router.post('/logout', users.logoutUser);
+router.get('/logged', isLoggedIn, (req, res, next) => {console.log(req.user); req.user ? res.send("Logueado conchetumare") : res.send("No estas logueado culiao");});
+router.get('/sessionCheck', isLoggedIn, (req, res, next) => {console.log(req.user);});
 
 module.exports = router;

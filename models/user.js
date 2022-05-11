@@ -1,15 +1,23 @@
 const mongoose = require('mongoose');
-const passportLocalMongoose = require('passport-local-mongoose');
 const Job = require('./job');
 const Review = require('./review');
 const Schema = mongoose.Schema;
 
+const passportLocalMongoose = require('passport-local-mongoose');
+
 const UserSchema = new Schema({
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
     name: String,
+    lastname: String,
     phone: String,
     whatsapp: String,
     facebook: String,
     linkedin: String,
+    instagram: String,
     email: {
         type: String,
         required: true,
@@ -64,7 +72,6 @@ UserSchema.post('findOneAndDelete', async function(doc){
     }
 });
 
-
-UserSchema.plugin(passportLocalMongoose);
+UserSchema.plugin(passportLocalMongoose, { usernameField : 'email'});
 
 module.exports = mongoose.model('User', UserSchema);

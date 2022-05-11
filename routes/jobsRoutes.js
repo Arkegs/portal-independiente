@@ -1,15 +1,16 @@
 const express = require('express');
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const jobs = require('../controllers/jobs');
+const { isLoggedIn } = require('../middleware');
 
 // Get Jobs route
 router.get('/', jobs.getAllJobs);
 
 // CRUD for Job
-router.post('/newjob', jobs.createJob);
+router.post('/newjob', isLoggedIn, jobs.createJob);
 router.route('/:jobId')
     .get(jobs.getJob)
-    .delete(jobs.deleteJob)
-    .put(jobs.editJob);
+    .delete(isLoggedIn, jobs.deleteJob)
+    .put(isLoggedIn, jobs.editJob);
 
 module.exports = router;

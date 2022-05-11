@@ -6,6 +6,7 @@ if(process.env.NODE_ENV !== "production"){
 const express = require('express');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 5000;
 
@@ -15,12 +16,6 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongo');
-
-// Routes setting
-const loginRoutes = require('./routes/loginRoutes');
-const jobsRoutes = require('./routes/jobsRoutes');
-const userRoutes = require('./routes/userRoutes');
-const reviewRoutes = require('./routes/reviewRoutes');
 
 // DB connection
 // mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_KEY}@cluster0.i4xd8.mongodb.net/hauntrip?retryWrites=true&w=majority`, { useUnifiedTopology: true })
@@ -38,16 +33,8 @@ const app = express();
 // App setup
 app.use(methodOverride('_method'));
 app.use(bodyParser.json());
-app.use('/api/jobs/:jobId/reviews', reviewRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/jobs', jobsRoutes);
-app.use('/api', loginRoutes);
 
 // Passport and session settings
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
 const store = MongoDBStore.create({
     mongoUrl: 'mongodb://localhost:27017/portalindependiente',
     secret: process.env.SESSION_SECRET,
@@ -59,12 +46,38 @@ store.on("error", function(e){
 })
 
 app.use(session({
+    name: process.env.SESSION_NAME,
     store: store,
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }
-}))
+}));
+
+app.use(
+    cors({
+      origin: true,
+      credentials: true,
+      optionsSuccessStatus: 200,
+      origin: 'http://localhost:3000'
+}));
+
+// Passport initialize
+app.use(passport.initialize());
+app.use(passport.session());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password'}, User.authenticate()));
+
+// Routes setting
+const loginRoutes = require('./routes/loginRoutes');
+const jobsRoutes = require('./routes/jobsRoutes');
+const userRoutes = require('./routes/userRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+app.use('/api/jobs/:jobId/reviews', reviewRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/jobs', jobsRoutes);
+app.use('/api', loginRoutes);
 
 // GET route
 app.get('/express_backend', (req, res) => {
