@@ -8,8 +8,9 @@ const Paginate = ({lastPage, currentPage, setState, setError, setLoading, query}
     const changePage = (newPage) => {
         try{
             setLoading(true);
-            axios.get(`api/jobs?pageNum=${newPage}${query}`)
+            axios.get(`api/jobs${query}&pageNum=${newPage}`)
             .then(resp => {
+                console.log(`CAMBIO DE PAGINA! api/jobs${query}&pageNum=${newPage}`);
                 console.log(resp.data.payload.results);
                 setState({results:resp.data.payload.results});
             })

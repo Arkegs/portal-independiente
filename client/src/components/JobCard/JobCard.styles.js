@@ -9,7 +9,7 @@ export const Wrapper = styled.div`
     max-width: 45%;
     padding: 25px;
     animation: animateJobCards 1s;
-
+    transition: box-shadow 0.3s linear;
     @keyframes animateJobCards{
         from{
             opacity: 0;
@@ -23,11 +23,20 @@ export const Wrapper = styled.div`
         width: 100%;
         max-width: 100%;
     } 
+
+    :hover{
+        -webkit-box-shadow: 0px 5px 10px 5px rgba(0,0,0,0.70); 
+        box-shadow: 0px 5px 10px 5px rgba(0,0,0,0.7);
+    }
+
+    a{
+        text-decoration: none;
+    }
 `;
 
 export const Content = styled.div`
     width: 100%;
-
+    color: var(--textColor);
 `
 
 export const JobImg = styled.div`
