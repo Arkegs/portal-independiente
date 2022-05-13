@@ -7,11 +7,9 @@ export const Wrapper = styled.div`
 `;
 
 export const PageButton = styled.div`
-    max-width: 30px;
-    max-height: 30px;
     padding: 10px;
     margin: 0 5px;
-    border-radius: 3px;
+    border-radius: 5px;
     color: white;
     background-color: black;
     cursor: pointer;

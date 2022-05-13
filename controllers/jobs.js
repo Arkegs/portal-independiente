@@ -5,6 +5,7 @@ const Job = require('../models/job');
 module.exports.getAllJobs = async (req, res) =>{
     const jobs = {sortType: undefined, results: {}};
     const sortType = {sort: {}};
+    const searchTerm = {title:{'$regex': ''}};
     try{
         //If a sort query parameter is given, the search will be sorted
         if(req.query.sortingType){
@@ -16,12 +17,15 @@ module.exports.getAllJobs = async (req, res) =>{
                 jobs.sortType = sortQuery;
             }
         }
+        if(req.query.wordFilter){
+            searchTerm.title = {'$regex': req.query.wordFilter};
+        }
         if(req.query.pageNum){
             // Paginate results if pageNum parameter is given
-            jobs.results = await Job.paginate({},{page: req.query.pageNum, limit:8, populate: 'author', ...sortType});
+            jobs.results = await Job.paginate(searchTerm,{page: req.query.pageNum, limit:8, populate: 'author', ...sortType});
             return res.send({status:"success", payload: jobs});
         }
-        jobs.results = await Job.paginate({},{page: 0, limit:8, populate: 'author', ...sortType});
+        jobs.results = await Job.paginate(searchTerm,{page: 0, limit:8, populate: 'author', ...sortType});
         return res.send({status:"success", payload: jobs});
     } catch(err){
         return res.send({status:"failure", payload: err})

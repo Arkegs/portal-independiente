@@ -57,18 +57,24 @@ const JobList = () => {
         <Wrapper>
             <SearchMenu setQuery={setQuery}/>
             <Content>
-                {state.results.docs.map(item => <JobCard key={item._id} job={item} />)}
+                {(state.results !== undefined) 
+                    ? state.results.docs.map(item => <JobCard key={item._id} job={item} />)
+                    : <div>Sin resultados</div>
+                }
                 {error && <div>Algo falló. Intentelo nuevamente.</div>}
             </Content>
             {loading && <Spinner />}
-            <Paginate 
-                lastPage={state.results.totalPages} 
-                currentPage={state.results.page} 
-                setState={setState}
-                setError={setError}
-                setLoading={setLoading}
-                query={query}
-            />
+            {
+                state.results && 
+                <Paginate 
+                    lastPage={state.results.totalPages} 
+                    currentPage={state.results.page} 
+                    setState={setState}
+                    setError={setError}
+                    setLoading={setLoading}
+                    query={query}
+                />
+            }
         </Wrapper>
     );
 };
